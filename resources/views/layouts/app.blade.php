@@ -93,7 +93,14 @@
                         },
                         body: JSON.stringify({})
                     })
-                    .then(response => response.json())
+                    .then(response => {
+            if (response.status === 401) {
+                // Redirect to login page if user is not authenticated
+                window.location.href = "/login";
+                return;
+            }
+            return response.json();
+        })
                     .then(data => {
                         if (data.success) {
                             let likeCountSpan = document.getElementById(
@@ -107,10 +114,10 @@
 
                             if (data.liked) {
                                 this.classList.add(
-                                'text-red-500'); // Change color when liked
+                                'text-blue-500'); // Change color when liked
                             } else {
                                 this.classList.remove(
-                                'text-red-500'); // Revert color when unliked
+                                'text-blue-500'); // Revert color when unliked
                             }
                         }
                     })

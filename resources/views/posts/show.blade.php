@@ -21,7 +21,7 @@
                     class="w-full h-96 object-cover rounded-lg my-4">
             @endif
 
-            
+
             <div class="text-gray-800 text-lg leading-relaxed mt-4">
                 {!! $post->content !!}
             </div><br>
@@ -30,18 +30,29 @@
                 @if (Auth::user()->id === $post->user_id)
                     <a href="{{ route('posts.edit', $post->id) }}">
                         <button class="bg-green-600 text-white px-3 py-1 rounded-lg text-xl hover:bg-green-700">
-                            Edit
+                            Edit Post
                         </button>
                     </a>
                     <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded-lg text-xl hover:bg-red-700">
-                            Delete
+                            Delete Post
                         </button>
                     </form>
                 @endif
             @endauth
+
+            <meta name="csrf-token" content="{{ csrf_token() }}">
+
+            @php
+                $liked = $post->likes->contains('user_id', auth()->id());
+            @endphp
+
+            <button class="like-btn bg-yellow-700 px-3 py-1 rounded-lg text-xl hover:bg-yellow-800" data-post-id="{{ $post->id }}">
+                👍 <span id="like-text-{{ $post->id }}">{{ $liked ? 'Liked' : 'Like' }}</span>
+                (<span id="like-count-{{ $post->id }}">{{ $post->likes->count() }}</span>)
+            </button>
 
             <div class="mt-10">
                 <h3 class="text-2xl font-semibold">Comments</h3>

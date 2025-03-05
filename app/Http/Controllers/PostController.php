@@ -6,18 +6,44 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Like;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
+    /**
+     * Show all posts, with optional category filtering.
+     * This method is used for both home and posts index pages.
+     */
+    public function index(Request $request)
+    {
+        $categories = Category::all();
+        $postsQuery = Post::with(['categories', 'likes', 'user']); // Load relationships to avoid multiple queries
+
+        // Apply category filtering if selected
+        if ($request->has('categories') && !empty($request->categories)) {
+            $postsQuery->whereHas('categories', function ($query) use ($request) {
+                $query->whereIn('categories.id', $request->categories);
+            });
+        }
+
+        $posts = $postsQuery->latest()->get(); // Get posts ordered by latest
+
+        // Determine which view to return based on the route
+        if ($request->routeIs('home')) {
+            return view('home', compact('posts', 'categories'));
+        } else {
+            return view('posts.index', compact('posts', 'categories'));
+        }
+    }
+
     /**
      * Show the form for creating a new post.
      */
     public function create()
     {
-        Log::info('djuhiu');
+        Log::info('Create post page accessed.');
         $categories = Category::all();
         return view('posts.create', compact('categories'));
     }
@@ -56,35 +82,13 @@ class PostController extends Controller
     }
 
     /**
-     * Display a listing of the posts with category filter.
-     */
-    public function index(Request $request)
-    {
-        $categories = Category::all();
-        $posts = Post::with(['categories', 'likes']); // Load likes to prevent null error
-
-        // Apply category filtering if selected
-        if ($request->has('categories') && !empty($request->categories)) {
-            $posts->whereHas('categories', function ($query) use ($request) {
-                $query->whereIn('categories.id', $request->categories);
-            });
-        }
-
-        return view('posts.index', [
-            'posts' => $posts->latest()->get(),
-            'categories' => $categories
-        ]);
-    }
-
-    /**
      * Display a single post.
      */
     public function show($id)
     {
-        $post = Post::with(['user', 'categories', 'comments'])->findOrFail($id);
+        $post = Post::with(['user', 'categories', 'comments.user'])->findOrFail($id);
         return view('posts.show', compact('post'));
     }
-
 
     /**
      * Like or unlike a post.
@@ -114,6 +118,10 @@ class PostController extends Controller
             'likes_count' => $post->likes()->count()
         ]);
     }
+
+    /**
+     * Store a new comment on a post.
+     */
     public function storeComment(Request $request, $postId)
     {
         $request->validate([

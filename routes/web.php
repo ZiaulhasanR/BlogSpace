@@ -8,10 +8,20 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminPostController;
 use App\Http\Controllers\PostEditController;
 use App\Http\Controllers\UploadController;
-
+use App\Models\Post;
+use App\Models\Category;
 Route::get('/', function () {
-    return view('home');
+    $categories = Category::all();
+    $posts = Post::with(['categories', 'likes', 'user'])->latest()->get();
+    return view('home', compact('posts', 'categories'));
 })->name('home');
+
+ Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+ Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+// Route::post('/posts/{id}/like', [PostController::class, 'toggleLike'])->name('posts.like');
+// Route::post('/posts/{id}/comment', [PostController::class, 'storeComment'])->name('posts.comment');
+// Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+// Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');

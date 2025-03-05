@@ -6,17 +6,21 @@
 <div class="container mx-auto py-10 flex">
     <aside class="w-1/4 bg-gray-100 p-4 rounded-lg shadow-lg h-screen sticky top-10 overflow-auto">
         <h2 class="text-xl font-semibold mb-4">Filter by Categories</h2>
-        <form action="{{ route('posts.index') }}" method="GET">
+        <form action="{{ route('posts.index') }}" method="GET" id="category-filter-form">
+            <div class="mb-2">
+                <input type="checkbox" id="all-categories" name="all_categories" value="1" {{ empty(request('categories')) ? 'checked' : '' }}>
+                <label class="ml-2" for="all-categories">All</label>
+            </div>
             @foreach ($categories as $category)
                 <div class="mb-2">
-                    <input type="checkbox" name="categories[]" value="{{ $category->id }}"
-                        {{ in_array($category->id, request('categories', [])) ? 'checked' : '' }}>
+                    <input type="checkbox" class="category-checkbox" name="categories[]" value="{{ $category->id }}" {{ in_array($category->id, request('categories', [])) ? 'checked' : '' }}>
                     <label class="ml-2">{{ $category->name }}</label>
                 </div>
             @endforeach
-            <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Apply Filters</button>
+            {{-- <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Apply Filters</button> --}}
         </form>
     </aside>
+
 
     <div class="w-3/4 pl-6">
         <h1 class="text-4xl font-bold text-center mb-10">All Blog Posts</h1>
@@ -46,15 +50,8 @@
 
                     <p class="text-gray-600 mb-4">{!! Str::limit(strip_tags($post->content), 100) !!}</p>
 
-                    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-                    @php
-                        $liked = $post->likes->contains('user_id', auth()->id());
-                    @endphp
-
-                    <button class="like-btn mt-4 inline-block px-4 py-2 rounded" data-post-id="{{ $post->id }}">
-                        👍 <span id="like-text-{{ $post->id }}">{{ $liked ? 'Liked' : 'Like' }}</span>
-                        (<span id="like-count-{{ $post->id }}">{{ $post->likes->count() }}</span>)
+                    <button class="like-btn mt-4 inline-block px-4 py-2 rounded text-blue-500" data-post-id="{{ $post->id }}">
+                        👍(<span id="like-count-{{ $post->id }}">{{ $post->likes->count() }}</span>)
                     </button>
 
                     <!-- Comment Count Button (Redirect to Post Page) -->
@@ -67,4 +64,44 @@
         </div>
     </div>
 </div>
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+    const allCategoriesCheckbox = document.getElementById('all-categories');
+    const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
+    const form = document.getElementById('category-filter-form');
+
+    // Function to update the state of the "All" checkbox
+    function updateAllCheckboxState() {
+        const anyCategoryChecked = Array.from(categoryCheckboxes).some(checkbox => checkbox.checked);
+        allCategoriesCheckbox.checked = !anyCategoryChecked;
+    }
+
+    // Event listener for the "All" checkbox
+    allCategoriesCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            categoryCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+        form.submit();
+    });
+
+    // Event listeners for individual category checkboxes
+    categoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                allCategoriesCheckbox.checked = false;
+            } else {
+                updateAllCheckboxState();
+            }
+            form.submit();
+        });
+    });
+
+    // Initialize the state of the "All" checkbox on page load
+    updateAllCheckboxState();
+});
+
+
+</script>
 @endsection
