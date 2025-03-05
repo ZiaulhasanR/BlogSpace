@@ -31,19 +31,20 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'category_id' => 'required|array',
             'category_id.*' => 'exists:categories,id',
-            'content' => 'required|string',
+            'content' => 'required|string', // Quill sends HTML content
             'image' => 'nullable|image|max:2048',
         ]);
 
+        // Handle image upload
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('post_images', 'public');
         }
 
-        // Create a new post
+        // Create post
         $post = Post::create([
             'title' => $request->title,
-            'content' => $request->content,
+            'content' => $request->content, // Save Quill HTML content
             'image' => $imagePath,
             'user_id' => Auth::id(),
         ]);

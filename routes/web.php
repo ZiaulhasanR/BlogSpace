@@ -7,6 +7,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminPostController;
 use App\Http\Controllers\PostEditController;
+use App\Http\Controllers\UploadController;
 
 Route::get('/', function () {
     return view('home');
@@ -40,6 +41,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['auth', 'author'])->group(function () {
         Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
         Route::get('create/post', [PostController::class, 'create'])->name('create.post');
+
+        Route::post('/upload-image', [UploadController::class, 'uploadImage'])->name('upload.image');
+
         route::middleware(['is_post_owner'])->group(function () {
             Route::get('/posts/{post}/edit', [PostEditController::class, 'edit'])->name('posts.edit');
             Route::delete('/posts/{post}', [PostEditController::class, 'destroy'])->name('posts.destroy');

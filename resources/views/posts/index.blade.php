@@ -44,7 +44,8 @@
                         <a href="{{ route('posts.show', $post->id) }}">{{ $post->title }}</a>
                     </h2>
 
-                    <p class="text-gray-600 mb-4">{{ Str::limit($post->content, 100) }}</p>
+                    <p class="text-gray-600 mb-4">{!! Str::limit(strip_tags($post->content), 100) !!}</p>
+
                     <meta name="csrf-token" content="{{ csrf_token() }}">
 
                     @php

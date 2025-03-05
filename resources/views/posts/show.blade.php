@@ -21,7 +21,10 @@
                     class="w-full h-96 object-cover rounded-lg my-4">
             @endif
 
-            <p class="text-gray-800 text-lg leading-relaxed mt-4">{{ $post->content }}</p><br>
+            
+            <div class="text-gray-800 text-lg leading-relaxed mt-4">
+                {!! $post->content !!}
+            </div><br>
 
             @auth
                 @if (Auth::user()->id === $post->user_id)
@@ -39,7 +42,8 @@
                     </form>
                 @endif
             @endauth
-                        <div class="mt-10">
+
+            <div class="mt-10">
                 <h3 class="text-2xl font-semibold">Comments</h3>
 
                 @auth

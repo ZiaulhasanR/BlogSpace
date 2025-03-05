@@ -3,7 +3,7 @@
 @section('title', 'Manage Posts')
 
 @section('content')
-<div class="container">
+<div class="container px-10 pt-3">
     <h2 class="text-2xl font-bold mb-4">Manage Posts</h2>
 
     <table class="w-full border mt-4">
@@ -20,7 +20,7 @@
             @foreach ($posts as $post)
                 <tr id="post-{{ $post->id }}">
                     <td class="px-4 py-2 pl-10">{{ $post->title }}</td>
-                    <td class="px-4 py-2">{{ Str::limit($post->content, 50) }}</td>
+                    <td class="px-4 py-2">{!! Str::limit(strip_tags($post->content), 50) !!}</td>
                     <td class="px-4 py-2">
                         @if($post->image)
                             <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}" class="w-16 h-16 object-cover">
