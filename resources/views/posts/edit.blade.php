@@ -63,7 +63,7 @@
     <!-- Include Quill JS -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
-        // Initialize Quill editor
+
         var quill = new Quill('#quill-editor', {
             theme: 'snow',
             placeholder: 'Write your post content here...',
@@ -87,16 +87,16 @@
             }
         });
 
-        // Set initial content
+
         const initialContent = {!! json_encode(old('content', $post->content)) !!};
         quill.root.innerHTML = initialContent;
 
-        // Synchronize hidden input with Quill content
+
         quill.on('text-change', function() {
             document.getElementById('content').value = quill.root.innerHTML;
         });
 
-        // Ensure content is updated on form submit
+
         document.querySelector('form').addEventListener('submit', function() {
             document.getElementById('content').value = quill.root.innerHTML;
         });

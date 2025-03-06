@@ -57,7 +57,7 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'category_id' => 'required|array',
             'category_id.*' => 'exists:categories,id',
-            'content' => 'required|string', // Quill sends HTML content
+            'content' => 'required|string', 
             'image' => 'nullable|image|max:2048',
         ]);
 
@@ -67,15 +67,15 @@ class PostController extends Controller
             $imagePath = $request->file('image')->store('post_images', 'public');
         }
 
-        // Create post
+
         $post = Post::create([
             'title' => $request->title,
-            'content' => $request->content, // Save Quill HTML content
+            'content' => $request->content,
             'image' => $imagePath,
             'user_id' => Auth::id(),
         ]);
 
-        // Attach selected categories to the post
+
         $post->categories()->sync($request->category_id);
 
         return redirect()->route('posts.index')->with('success', 'Post created successfully!');
@@ -139,5 +139,12 @@ class PostController extends Controller
             'message' => 'Comment added successfully!',
             'comment' => $comment->load('user'),
         ]);
+    }
+    public function myPosts()
+    {
+        $posts = Post::where('user_id', Auth::id())->latest()->get();
+        $categories = Category::all();
+
+        return view('posts.my-posts', compact('posts', 'categories'));
     }
 }

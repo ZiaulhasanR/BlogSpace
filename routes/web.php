@@ -53,6 +53,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('create/post', [PostController::class, 'create'])->name('create.post');
 
         Route::post('/upload-image', [UploadController::class, 'uploadImage'])->name('upload.image');
+        Route::get('/my-posts', [PostController::class, 'myPosts'])->name('posts.my');
+
 
         route::middleware(['is_post_owner'])->group(function () {
             Route::get('/posts/{post}/edit', [PostEditController::class, 'edit'])->name('posts.edit');
