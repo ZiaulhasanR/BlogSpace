@@ -49,7 +49,8 @@
                 $liked = $post->likes->contains('user_id', auth()->id());
             @endphp
 
-            <button class="like-btn bg-yellow-700 px-3 py-1 rounded-lg text-xl hover:bg-yellow-800" data-post-id="{{ $post->id }}">
+            <button class="like-btn bg-yellow-700 px-3 py-1 rounded-lg text-xl hover:bg-yellow-800"
+                data-post-id="{{ $post->id }}">
                 👍 <span id="like-text-{{ $post->id }}">{{ $liked ? 'Liked' : 'Like' }}</span>
                 (<span id="like-count-{{ $post->id }}">{{ $post->likes->count() }}</span>)
             </button>
@@ -65,14 +66,26 @@
                         <button type="submit" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Post Comment</button>
                     </form>
                 @else
-                    <p class="text-gray-600 mt-4">You must <a href="{{ route('login') }}" class="text-blue-600">log in</a> to comment.</p>
+                    <p class="text-gray-600 mt-4">You must <a href="{{ route('login') }}" class="text-blue-600">log in</a> to
+                        comment.</p>
                 @endauth
 
                 <div id="comments-list" class="mt-6">
                     @foreach ($post->comments as $comment)
-                        <div class="border-b py-4">
-                            <p class="text-gray-800"><strong>{{ $comment->user->name }}</strong>: {{ $comment->body }}</p>
-                            <p class="text-gray-500 text-sm">{{ $comment->created_at->diffForHumans() }}</p>
+                        <div class="border-b py-4 flex justify-between items-center" id="comment-{{ $comment->id }}">
+                            <div>
+                                <p class="text-gray-800"><strong>{{ $comment->user->name }}</strong>: {{ $comment->body }}
+                                </p>
+                                <p class="text-gray-500 text-sm">{{ $comment->created_at->diffForHumans() }}</p>
+                            </div>
+                            @auth
+                                @if (Auth::id() === $comment->user_id || Auth::id() === $post->user_id)
+                                    <button class="delete-comment bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
+                                        data-comment-id="{{ $comment->id }}">
+                                        Delete
+                                    </button>
+                                @endif
+                            @endauth
                         </div>
                     @endforeach
                 </div>
@@ -81,7 +94,7 @@
     </div>
 
     <script>
-        document.getElementById('comment-form').addEventListener('submit', function (event) {
+        document.getElementById('comment-form').addEventListener('submit', function(event) {
             event.preventDefault();
 
             let post_id = document.getElementById('post_id').value;
@@ -89,29 +102,56 @@
             let csrfToken = document.querySelector('input[name=_token]').value;
 
             fetch(`/comments/${post_id}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": csrfToken
-                },
-                body: JSON.stringify({ body: body })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    let commentList = document.getElementById('comments-list');
-                    let newComment = document.createElement('div');
-                    newComment.classList.add('border-b', 'py-4');
-                    newComment.innerHTML = `
-                        <p class="text-gray-800"><strong>${data.comment.user.name}</strong>: ${data.comment.body}</p>
-                        <p class="text-gray-500 text-sm">${data.comment.created_at}</p>
-                    `;
-                    commentList.prepend(newComment);
-
-                    document.getElementById('comment-body').value = '';
-                }
-            })
-            .catch(error => console.error("Error:", error));
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken
+                    },
+                    body: JSON.stringify({
+                        body: body
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload(); // Reload the page to refresh comments
+                    }
+                })
+                .catch(error => console.error("Error:", error));
         });
+
+        // Attach delete event to all existing buttons when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.delete-comment').forEach(button => attachDeleteEvent(button));
+        });
+
+        // Function to attach delete event to a single button
+        const attachDeleteEvent = (button) => {
+            button.addEventListener('click', function() {
+                if (!confirm('Are you sure you want to delete this comment?')) return;
+
+                const commentId = this.getAttribute('data-comment-id');
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                fetch(`/comments/${commentId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById(`comment-${commentId}`).remove();
+                            
+
+                        } else {
+                            alert('Failed to delete comment.');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        };
     </script>
 @endsection

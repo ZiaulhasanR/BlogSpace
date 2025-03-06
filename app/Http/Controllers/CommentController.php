@@ -13,26 +13,26 @@ class CommentController extends Controller
      * Store a new comment.
      */
     public function store(Request $request, $postId)
-{
-    $request->validate([
-        'body' => 'required|string',
-    ]);
+    {
+        $request->validate([
+            'body' => 'required|string',
+        ]);
 
-    $comment = new Comment();
-    $comment->body = $request->body;
-    $comment->user_id = Auth::id();
-    $comment->post_id = $postId;
-    $comment->save();
+        $comment = new Comment();
+        $comment->body = $request->body;
+        $comment->user_id = Auth::id();
+        $comment->post_id = $postId;
+        $comment->save();
 
-    return response()->json([
-        'success' => true,
-        'comment' => [
-            'body' => $comment->body,
-            'user' => ['name' => Auth::user()->name],
-            'created_at' => $comment->created_at->diffForHumans(),
-        ]
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'comment' => [
+                'body' => $comment->body,
+                'user' => ['name' => Auth::user()->name],
+                'created_at' => $comment->created_at->diffForHumans(),
+            ]
+        ]);
+    }
 
 
     /**
@@ -83,17 +83,17 @@ class CommentController extends Controller
     /**
      * Delete a comment.
      */
-    public function destroy(Comment $comment)
+    public function destroy($id)
     {
-        if (Auth::id() !== $comment->user_id) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        $comment = Comment::find($id);
+
+        
+
+        if (Auth::id() === $comment->user_id || Auth::id() === $comment->post->user_id) {
+            $comment->delete();
+            return response()->json(['success' => true]);
         }
 
-        $comment->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Comment deleted successfully!',
-        ]);
+        return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
     }
 }

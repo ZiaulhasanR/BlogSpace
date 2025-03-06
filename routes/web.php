@@ -23,6 +23,12 @@ Route::get('/', function () {
 // Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
 // Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
 
+
+Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('comments.destroy');
+
+
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
