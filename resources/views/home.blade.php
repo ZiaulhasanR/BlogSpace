@@ -22,7 +22,8 @@
     </div>
 
 
-    <div class="w-3/4 pl-90 pt-10">
+    <div id="blog-section" class="w-3/4 pl-90 pt-10">
+
         {{-- <h1 class="text-4xl font-bold text-center mb-10">All Blog Posts</h1> --}}
         <div class="grid grid-cols-1 px-10 container  itme-center">
             @foreach ($posts as $post)

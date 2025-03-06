@@ -20,9 +20,10 @@
         <div>
             <ul class="flex space-x-6 font-semibold">
                 <li><a href="{{ route('home') }}" class="hover:text-blue-500">Home</a></li>
-                <li><a href="#" class="hover:text-blue-500">About</a></li>
-                <li><a href="#" class="hover:text-blue-500">Blog</a></li>
-                <li><a href="#" class="hover:text-blue-500">Contact</a></li>
+
+                <li><a href="{{ route('home') }}#blog-section" class="hover:text-blue-500">Blog</a></li>
+
+
             </ul>
         </div>
         <div class="flex space-x-4 relative">
@@ -133,6 +134,24 @@
             });
         });
     });
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener("click", function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute("href"));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 100, // Adjust for navbar height
+                        behavior: "smooth"
+                    });
+                }
+            });
+        });
+    });
+
+
 
 
 
