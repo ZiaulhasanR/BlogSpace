@@ -106,7 +106,7 @@
                         <p class="text-gray-800"><strong>${data.comment.user.name}</strong>: ${data.comment.body}</p>
                         <p class="text-gray-500 text-sm">${data.comment.created_at}</p>
                     `;
-                    commentList.prepend(newComment);
+                    commentList.appendChild(newComment);
 
                     document.getElementById('comment-body').value = '';
                 }
