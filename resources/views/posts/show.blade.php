@@ -144,7 +144,7 @@
                     .then(data => {
                         if (data.success) {
                             document.getElementById(`comment-${commentId}`).remove();
-                            
+
 
                         } else {
                             alert('Failed to delete comment.');
