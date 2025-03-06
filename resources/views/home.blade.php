@@ -22,7 +22,8 @@
     </div>
 
 
-    <div id="blog-section" class="w-3/4 pl-90 pt-10">
+    <div id="blog-section" class="px-40 pt-10 bg-blue-300">
+        <h1 class="text-3xl text-center py-8 font-bold text-blue-700">Blog Posts</h1>
 
         {{-- <h1 class="text-4xl font-bold text-center mb-10">All Blog Posts</h1> --}}
         <div class="grid grid-cols-1 px-10 container  itme-center">
@@ -49,7 +50,7 @@
                         <a href="{{ route('posts.show', $post->id) }}">{{ $post->title }}</a>
                     </h2>
 
-                    <p class="text-gray-600 mb-4">{!! Str::limit(strip_tags($post->content), 100) !!}</p>
+                    <p class="text-gray-600 mb-4">{!! Str::limit(strip_tags($post->content), 200) !!}</p>
 
                     <button class="like-btn mt-4 inline-block px-4 py-2 rounded text-blue-500" data-post-id="{{ $post->id }}">
                         👍(<span id="like-count-{{ $post->id }}">{{ $post->likes->count() }}</span>)
