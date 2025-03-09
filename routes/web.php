@@ -8,16 +8,18 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminPostController;
 use App\Http\Controllers\PostEditController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\RoleRequestController;
 use App\Models\Post;
 use App\Models\Category;
+
 Route::get('/', function () {
     $categories = Category::all();
     $posts = Post::with(['categories', 'likes', 'user'])->latest()->get();
     return view('home', compact('posts', 'categories'));
 })->name('home');
 
- Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
- Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
 // Route::post('/posts/{id}/like', [PostController::class, 'toggleLike'])->name('posts.like');
 // Route::post('/posts/{id}/comment', [PostController::class, 'storeComment'])->name('posts.comment');
 // Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
@@ -42,7 +44,7 @@ Route::post('/posts/{id}/like', [PostController::class, 'toggleLike'])->middlewa
 
 
 Route::middleware(['auth'])->group(function () {
-
+    Route::post('/request-upgrade', [RoleRequestController::class, 'requestUpgrade'])->name('request.upgrade');
 
     Route::get('/dashboard', function () {
         return view('dashboard');
@@ -82,6 +84,11 @@ Route::middleware(['auth'])->group(function () {
             return view('admin.home');
         })->name('admin.home');
 
+        Route::get('/admin/role-requests', [RoleRequestController::class, 'index'])->name('admin.role-requests');
+        Route::post('/admin/role-requests/{id}/approve', [RoleRequestController::class, 'approve'])->name('admin.role-requests.approve');
+        Route::post('/admin/role-requests/{id}/reject', [RoleRequestController::class, 'reject'])->name('admin.role-requests.reject');
+
+
         Route::get('/admin/users', [AdminUserController::class, 'index'])->name('users.index');
         //Route::get('/admin/users/{user}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
         Route::put('/admin/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
@@ -102,7 +109,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/categories/{category}/edit', [AdminPostController::class, 'category_edit'])->name('admin.categories.edit');
         Route::put('/admin/categories/{category}', [AdminPostController::class, 'category_update'])->name('admin.categories.update');
         Route::delete('/admin/categories/{category}', [AdminPostController::class, 'category_delete'])->name('admin.categories.delete');
-        Route::post('/admin/categories',[AdminPostController::class, 'category_store'])->name('admin.categories.store');
-        Route::get('/admin/categories/create',[AdminPostController::class,'category_create'])->name('admin.categories.create');
+        Route::post('/admin/categories', [AdminPostController::class, 'category_store'])->name('admin.categories.store');
+        Route::get('/admin/categories/create', [AdminPostController::class, 'category_create'])->name('admin.categories.create');
     });
 });

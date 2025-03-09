@@ -1,14 +1,15 @@
 @extends('layouts.app')
+@extends('layouts.sidebar')
 
 @section('title', 'Admin-Panel')
 
 @section('content')
     <div class="container mx-auto my-10 grid grid-cols-2 items-center px-6 bg-blue-100">
         <div class="">
-            <h1 class="text-4xl font-semibold text-center">Welcome to Admin Panel</h1>
+            {{-- <h1 class="text-4xl font-semibold text-center">Welcome to Admin Panel</h1> --}}
 
 
-            <div class="flex flex-col justify-center items-center mt-10 gap-5">
+            {{-- <div class="flex flex-col justify-center items-center mt-10 gap-5">
 
                 @if (Auth::check())
                     @php $role = Auth::user()->role; @endphp
@@ -33,7 +34,7 @@
                         @endif
                     </div>
                 @endif
-            </div>
+            </div> --}}
 
         </div>
 

@@ -28,6 +28,15 @@ class PostController extends Controller
             });
         }
 
+        // Apply search filtering
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $postsQuery->where(function ($query) use ($search) {
+                $query->where('title', 'LIKE', "%{$search}%")
+                    ->orWhere('content', 'LIKE', "%{$search}%");
+            });
+        }
+
         $posts = $postsQuery->latest()->get(); // Get posts ordered by latest
 
         // Determine which view to return based on the route
@@ -37,6 +46,7 @@ class PostController extends Controller
             return view('posts.index', compact('posts', 'categories'));
         }
     }
+
 
     /**
      * Show the form for creating a new post.
@@ -57,7 +67,7 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'category_id' => 'required|array',
             'category_id.*' => 'exists:categories,id',
-            'content' => 'required|string', 
+            'content' => 'required|string',
             'image' => 'nullable|image|max:2048',
         ]);
 

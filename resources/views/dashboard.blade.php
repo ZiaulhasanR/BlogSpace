@@ -30,6 +30,17 @@
                                 </button>
                             </a>
                         @endif
+                        @if (Auth::user()->role === 'user' && !Auth::user()->roleRequests()->where('status', 'pending')->exists())
+                            <form action="{{ route('request.upgrade') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                    Request to Become an Author
+                                </button>
+                            </form>
+                        @elseif (Auth::user()->roleRequests()->where('status', 'pending')->exists())
+                            <p class="text-yellow-500 font-semibold">Your request is pending approval.</p>
+                        @endif
+
 
 
                         @if ($role === 'admin')

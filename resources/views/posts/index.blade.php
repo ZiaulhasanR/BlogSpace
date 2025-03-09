@@ -25,15 +25,23 @@
 
 
         <div class="w-3/4 pl-6">
-            <div class="flex ">
+            <div class="flex">
                 <div>
                     <h1 class="text-4xl font-bold text-center mb-10">All Blog Posts</h1>
+                    <!-- Search Form -->
+                    <form action="{{ route('posts.index') }}" method="GET" class="flex items-center pl-10">
+                        <input type="text" name="search" placeholder="Search posts..." value="{{ request('search') }}"
+                            class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="submit" class="ml-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                            Search
+                        </button>
+                    </form>
                 </div>
-                <div class="pl-[700px]">
+                <div class="pl-[600px]">
                     @if (Auth::check())
                         @php $role = Auth::user()->role; @endphp
                         @if ($role === 'author' || $role === 'admin')
-                            <a href="{{ route('posts.my') }}">
+                            <a href="{{ route('posts.my') }}" >
                                 <button class="bg-cyan-600 text-white px-3 py-1 rounded-lg text-xl hover:bg-cyan-700">
                                     My Posts
                                 </button>
@@ -44,7 +52,7 @@
 
             </div>
 
-            <div class="grid grid-cols-1 px-10 container">
+            <div class="grid grid-cols-1 px-10 py-10 container">
                 @foreach ($posts as $post)
                     <div class="bg-white rounded-lg shadow-md flex mb-6 overflow-hidden">
                         @if ($post->image)
@@ -126,5 +134,24 @@
             // Initialize the state of the "All" checkbox on page load
             updateAllCheckboxState();
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('input[name="search"]');
+        const postsContainer = document.querySelector('.grid');
+
+        searchInput.addEventListener('input', function() {
+            const searchQuery = this.value.trim();
+
+            fetch(`{{ route('posts.index') }}?search=${searchQuery}`)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newPosts = doc.querySelector('.grid').innerHTML;
+                    postsContainer.innerHTML = newPosts;
+                })
+                .catch(error => console.error('Error fetching search results:', error));
+        });
+    });
     </script>
 @endsection

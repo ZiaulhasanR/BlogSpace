@@ -13,7 +13,7 @@
 <body>
 
     <!-- Sticky Navbar -->
-    <nav class="bg-white text-black p-5 flex justify-between items-center shadow-lg sticky top-0 z-50">
+    <nav class="bg-white text-black p-5 flex justify-between items-center shadow-lg sticky top-0 z-50 ">
         <div class="text-4xl font-bold">
             <a href="{{ route('home') }}">BlogSpace</a>
         </div>
