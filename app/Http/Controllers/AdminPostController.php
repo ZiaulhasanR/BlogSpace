@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers;
+
+use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -95,5 +97,52 @@ class AdminPostController extends Controller
 
         // Return a success response
         return response()->json(['success' => true]);
+    }
+
+    public function category_index(){
+        $categories=Category::all();
+        return view('admin.categories.index',compact('categories'));
+    }
+
+    public function category_create(){
+        return view('admin.categories.create');
+    }
+
+    public function category_edit(Category $category){
+        return view('admin.categories.edit',compact('category'));
+    }
+
+    public function category_update(Request $request, Category $category){
+
+        $request->validate([
+            'name'=>'required|string',
+            'description'=>'required|string'
+        ]);
+
+        $category->name=$request->name;
+        $category->description=$request->description;
+        $category->save();
+
+        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully!');
+    }
+
+    public function category_store(Request $request){
+        $request->validate([
+            'name'=>'required|string',
+            'description'=>'required|string'
+        ]);
+        $category=new Category();
+        $category->name=$request->name;
+        $category->description=$request->description;
+        $category->save();
+
+        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully!');
+
+    }
+
+    public function category_delete(Category $category){
+        $category->delete();
+
+        return response()->json(['success'=>true]);
     }
 }

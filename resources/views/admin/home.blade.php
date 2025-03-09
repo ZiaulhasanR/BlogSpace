@@ -25,6 +25,11 @@
                                     Posts
                                 </button>
                             </a>
+                            <a href="{{ route('admin.categories.index') }}">
+                                <button class="bg-blue-600 text-white px-14 py-3 rounded-lg text-xl hover:bg-blue-700">
+                                    Categories
+                                </button>
+                            </a>
                         @endif
                     </div>
                 @endif

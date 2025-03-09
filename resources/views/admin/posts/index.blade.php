@@ -30,13 +30,16 @@
                     </td>
                     <td class="px-4 py-2">{{ $post->user->name }}</td>
                     <td class="px-4 py-2">
-                        <a href="{{ route('admin.posts.edit', $post->id) }}" class="text-blue-600">Edit</a>
-                        <button class="delete-post text-red-500 ml-2" data-post-id="{{ $post->id }}">Delete</button>
+                        <a href="{{ route('admin.posts.edit', $post->id) }}" class="text-blue-600"><button class="bg-orange-500 ml-2 hover:bg-orange-700 px-3 py-1 text-white rounded">Edit</button></a>
+                        <button class="delete-post bg-red-500 ml-2 hover:bg-red-700 px-3 py-1 rounded text-white" data-post-id="{{ $post->id }}">Delete</button>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+    <a href="{{ route('admin.home') }}" class="flex justify-end">
+        <button class="bg-cyan-500 ml-2 my-4 hover:bg-cyan-700 px-3 py-1 rounded text-white">Back to Admin Panel</button>
+    </a>
 </div>
 
 <script>

@@ -96,5 +96,13 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/admin/posts/{post}', [AdminPostController::class, 'destroy'])->name('admin.posts.destroy');
 
         Route::put('/admin/posts/{post}', [AdminPostController::class, 'update'])->name('admin.posts.update');
+
+
+        Route::get('/admin/categories', [AdminPostController::class, 'category_index'])->name('admin.categories.index');
+        Route::get('/admin/categories/{category}/edit', [AdminPostController::class, 'category_edit'])->name('admin.categories.edit');
+        Route::put('/admin/categories/{category}', [AdminPostController::class, 'category_update'])->name('admin.categories.update');
+        Route::delete('/admin/categories/{category}', [AdminPostController::class, 'category_delete'])->name('admin.categories.delete');
+        Route::post('/admin/categories',[AdminPostController::class, 'category_store'])->name('admin.categories.store');
+        Route::get('/admin/categories/create',[AdminPostController::class,'category_create'])->name('admin.categories.create');
     });
 });
